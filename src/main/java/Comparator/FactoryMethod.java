@@ -1,0 +1,14 @@
+package Comparator;
+
+public class FactoryMethod {
+    public static AbstractComparator getComparator(SearchType type) {
+        switch (type) {
+            case Full -> {return new FullComparator();}
+            case Equals -> {return new EqualsComparator();}
+            case Mask -> {return new MaskComparator();}
+            case Regular -> {return new RegExComparator();}
+            default -> throw new IllegalStateException("Unexpected type: " + type);
+        }
+    }
+
+}
