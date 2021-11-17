@@ -1,5 +1,5 @@
 package Parser;
-import Comparator.AbstractComparator;
+import Comparator.Comparator;
 
 import org.xml.sax.SAXException;
 
@@ -9,7 +9,7 @@ import javax.xml.parsers.SAXParserFactory;
 import java.io.IOException;
 
 public class SaxParser {
-    public SaxParser(AbstractComparator comparator, String fileName) throws IOException, ParserConfigurationException, SAXException {
+    public SaxParser(Comparator comparator, String fileName) throws IOException, ParserConfigurationException, SAXException {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setValidating(true);
         factory.setNamespaceAware(false);

@@ -5,7 +5,7 @@ import Constant.XConstant;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class MaskComparator extends AbstractComparator {
+public class MaskComparator extends Comparator {
     private Pattern pattern;
 
     @Override

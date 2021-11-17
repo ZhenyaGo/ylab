@@ -1,6 +1,6 @@
 package Parser;
 
-import Comparator.AbstractComparator;
+import Comparator.Comparator;
 import Constant.XConstant;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
@@ -9,26 +9,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class NodeParser extends DefaultHandler {
-    private final AbstractComparator comparator;
+    private final Comparator comparator;
 
-    public NodeParser(AbstractComparator comparator) {
+    public NodeParser(Comparator comparator) {
         this.comparator = comparator;
     }
 
     private final List<String> dir = new ArrayList<>();
-    private String currentTagName;
+    private boolean active;
     private boolean isFile, isDir;
 
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
-        currentTagName = qName;
-
         if(attributes.getLength() != 0 && attributes.getValue(XConstant.IS_FILE).equals(XConstant.TRUE)) {
             isFile = true;
         } else if (attributes.getLength() != 0 && !attributes.getValue(XConstant.IS_FILE).equals(XConstant.TRUE)) {
             isDir = true;
         }
+        active = qName.equals(XConstant.ACTIVE_NODE);
 
     }
 
@@ -37,20 +36,14 @@ public class NodeParser extends DefaultHandler {
         if(qName.equals(XConstant.INCLUDE_NODE)){
             dir.remove(dir.size() - 1);
         }
-        currentTagName =null;
     }
 
     @Override
     public void characters(char[] ch, int start, int length) {
-        if(currentTagName == null) {
-            return;
-        }
-
-        if(currentTagName.equals(XConstant.ACTIVE_NODE)) {
+        if(active) {
             String info = new String(ch, start, length);
-
             if(isDir) {
-                dir.add(info);
+                dir.add(dir.size() > 1 ? XConstant.SPLIT_DIR + info : info);
                 isDir = false;
             }
 
@@ -58,31 +51,22 @@ public class NodeParser extends DefaultHandler {
                 dir.add("");
                 comparator.start();
                 if(comparator.compare(info)) {
-                    getFilePath(dir, info);
+                    output(info);
                 }
                 isFile = false;
             }
         }
     }
 
-    private void getFilePath(List<String> dir, String fileName) {
-        for (String s: dir) {
-            if(!s.startsWith(XConstant.SPLIT_DIR) && !s.equals("")) {
-                System.out.print(s + XConstant.SPLIT_DIR);
-            } else System.out.print(s);
-        }
-        System.out.println(fileName);
-
-
-//        return dir.stream()
-//                .filter(e -> !equals(""))
-//                .collect(Collectors.joining());
+    private String getFilePath() {
+        return String.join("", dir);
 
     }
 
-//    private void output(String info) {
-//        System.out.println(getFilePath() + XConstant.SPLIT_DIR + info);
-//    }
+    private void output(String info) {
+        System.out.println(getFilePath().length() == 1
+                ? getFilePath() + info : getFilePath() + XConstant.SPLIT_DIR + info);
+    }
 
 }
 
