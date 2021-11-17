@@ -12,7 +12,7 @@ public class Main {
         try {
             ArgumentProcess arguments = new ArgumentProcess(args);
             FactoryMethod factoryMethod = new FactoryMethod();
-            Comparator comparator = factoryMethod.getComparator(arguments);
+            Comparator comparator = factoryMethod.getComparator(arguments.getType());
             comparator.setMask(arguments.getMask());
 
             new SaxParser(comparator, arguments.getInputFileName());

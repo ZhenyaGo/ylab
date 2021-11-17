@@ -28,6 +28,10 @@ public class ArgumentProcess {
     }
 
     private void validator(String[] args) {
+        if(args.length <= 1) {
+            throw new ArgumentException("There must be at least 2 parameters");
+        }
+
         if(args[0].equals(XConstant.KEY_INPUT_FILE)) {
            inputFileName = fileExists(args[1]);
             switch (args.length) {
@@ -41,19 +45,17 @@ public class ArgumentProcess {
                         } else {
                             type = SearchType.Equals;
                         }
-                    }
-
-                    if(args[2].equals(XConstant.KEY_MACK_REGULAR)) {
+                    } else if(args[2].equals(XConstant.KEY_MACK_REGULAR)) {
                         mask = args[3];
                         type = SearchType.Regular;
-                    }
-
-                    if(mask.isEmpty() && type == null) {
-                        throw new ArgumentException("invalid flag " + args[2]);
+                    } else {
+                        throw new ArgumentException("Third parameter must be -s or -S");
                     }
                 }
-                default -> throw new ArgumentException("invalid flag " + args[0]);
+                default -> throw new ArgumentException("The number of parameters isn't correct");
             }
+        } else {
+            throw new ArgumentException("First parameter must be -f");
         }
     }
 

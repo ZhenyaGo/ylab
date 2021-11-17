@@ -1,6 +1,6 @@
 package Comparator;
 
-public abstract class Comparator {
+public abstract class Comparator extends Item {
     private String mask;
 
     public String getMask() {

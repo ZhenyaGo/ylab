@@ -5,8 +5,6 @@ import Constant.XConstant;
 import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
-import java.util.ArrayList;
-import java.util.List;
 
 public class NodeParser extends DefaultHandler {
     private final Comparator comparator;
@@ -15,17 +13,21 @@ public class NodeParser extends DefaultHandler {
         this.comparator = comparator;
     }
 
-    private final List<String> dir = new ArrayList<>();
     private boolean active;
-    private boolean isFile, isDir;
+
+
+    private boolean checkElement(Attributes attributes) {
+        return attributes.getLength() != 0 && attributes.getLocalName(0).equals(XConstant.IS_FILE);
+    }
+    private boolean checkIsFile(Attributes attributes) {
+        return attributes.getValue(0).equals(XConstant.TRUE);
+    }
 
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) {
-        if(attributes.getLength() != 0 && attributes.getValue(XConstant.IS_FILE).equals(XConstant.TRUE)) {
-            isFile = true;
-        } else if (attributes.getLength() != 0 && !attributes.getValue(XConstant.IS_FILE).equals(XConstant.TRUE)) {
-            isDir = true;
+        if(checkElement(attributes)) {
+            comparator.setIsFile(checkIsFile(attributes));
         }
         active = qName.equals(XConstant.ACTIVE_NODE);
 
@@ -33,8 +35,12 @@ public class NodeParser extends DefaultHandler {
 
     @Override
     public void endElement(String uri, String localName, String qName) {
+        if(qName.equals(XConstant.ACTIVE_NODE)){
+            active = false;
+        }
+
         if(qName.equals(XConstant.INCLUDE_NODE)){
-            dir.remove(dir.size() - 1);
+            comparator.deleteDir();
         }
     }
 
@@ -42,30 +48,8 @@ public class NodeParser extends DefaultHandler {
     public void characters(char[] ch, int start, int length) {
         if(active) {
             String info = new String(ch, start, length);
-            if(isDir) {
-                dir.add(dir.size() > 1 ? XConstant.SPLIT_DIR + info : info);
-                isDir = false;
-            }
-
-            if(isFile) {
-                dir.add("");
-                comparator.start();
-                if(comparator.compare(info)) {
-                    output(info);
-                }
-                isFile = false;
-            }
+            comparator.store(info);
         }
-    }
-
-    private String getFilePath() {
-        return String.join("", dir);
-
-    }
-
-    private void output(String info) {
-        System.out.println(getFilePath().length() == 1
-                ? getFilePath() + info : getFilePath() + XConstant.SPLIT_DIR + info);
     }
 
 }
