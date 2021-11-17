@@ -34,6 +34,9 @@ public class NodeParser extends DefaultHandler {
 
     @Override
     public void endElement(String uri, String localName, String qName) {
+        if(qName.equals(XConstant.INCLUDE_NODE)){
+            dir.remove(dir.size() - 1);
+        }
         currentTagName =null;
     }
 
@@ -52,22 +55,34 @@ public class NodeParser extends DefaultHandler {
             }
 
             if(isFile) {
+                dir.add("");
                 comparator.start();
                 if(comparator.compare(info)) {
-                  getFilePath(dir, info);
+                    getFilePath(dir, info);
                 }
                 isFile = false;
             }
         }
     }
 
-    public void getFilePath(List<String> dir, String fileName) {
+    private void getFilePath(List<String> dir, String fileName) {
         for (String s: dir) {
-            if(!s.startsWith(XConstant.SPLIT_DIR)) {
+            if(!s.startsWith(XConstant.SPLIT_DIR) && !s.equals("")) {
                 System.out.print(s + XConstant.SPLIT_DIR);
             } else System.out.print(s);
         }
         System.out.println(fileName);
+
+
+//        return dir.stream()
+//                .filter(e -> !equals(""))
+//                .collect(Collectors.joining());
+
     }
+
+//    private void output(String info) {
+//        System.out.println(getFilePath() + XConstant.SPLIT_DIR + info);
+//    }
+
 }
 

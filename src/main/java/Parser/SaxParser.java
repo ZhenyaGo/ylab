@@ -11,6 +11,8 @@ import java.io.IOException;
 public class SaxParser {
     public SaxParser(AbstractComparator comparator, String fileName) throws IOException, ParserConfigurationException, SAXException {
         SAXParserFactory factory = SAXParserFactory.newInstance();
+        factory.setValidating(true);
+        factory.setNamespaceAware(false);
         SAXParser parser = factory.newSAXParser();
         NodeParser handler = new NodeParser(comparator);
         parser.parse(fileName, handler);
