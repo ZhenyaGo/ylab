@@ -1,6 +1,5 @@
 package Comparator;
 
-import Service.ArgumentProcess;
 
 public class FactoryMethod {
     public static Comparator getComparator(SearchType type) {
@@ -12,5 +11,4 @@ public class FactoryMethod {
             default -> throw new IllegalStateException("Unexpected type: " + type);
         }
     }
-
 }

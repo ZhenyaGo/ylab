@@ -25,14 +25,14 @@ public class SaxParserTest {
     @Test
     public void exactSearch() {
         Main.main(new String[]{"-f", FILE_PATH, "-s", "file-1498940214.xhtml"});
-        String actual = out.toString().trim();
+        String actual = out.toString();
         FILE_MATCHER.assertMatch(actual, EXACT_SEARCH);
     }
 
     @Test
     public void maskSearch() {
         Main.main(new String[]{"-f", FILE_PATH, "-s", "‘*.java’"});
-        String actual = out.toString().trim();
+        String actual = out.toString();
         FILE_MATCHER.assertMatch(actual, MASK_SEARCH);
     }
 
